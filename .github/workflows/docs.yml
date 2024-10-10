@@ -1,0 +1,31 @@
+name: Documentation
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # At 00:00 every Sunday
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  markdown-check:
+    name: Check Markdown
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check links
+        uses: UmbrellaDocs/action-linkspector@v1
+        with:
+          config_file: .github/workflows/lint/linkspector.yml
+          fail_on_error: 'true'
+          filter_mode: nofilter
+
+      - name: Lint
+        uses: avto-dev/markdown-lint@v1
+        with:
+          args: '**/*.md'
+          config: .github/workflows/lint/markdown.yml
